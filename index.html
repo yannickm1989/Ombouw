@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Machine Overzicht</title>
+<title>Ombouw</title>
 
 <style>
 body {
@@ -16,14 +16,33 @@ body {
     max-width: 400px;
     margin: auto;
     background: white;
-    padding: 20px;
     border-radius: 12px;
     box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    overflow: hidden;
 }
 
-h1 {
-    text-align: center;
-    margin-bottom: 20px;
+/* Header */
+.header {
+    background: #2e7d32;
+    color: white;
+    padding: 12px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.header img {
+    height: 32px;
+}
+
+.header h1 {
+    font-size: 20px;
+    margin: 0;
+}
+
+/* Content */
+.content {
+    padding: 20px;
 }
 
 label {
@@ -49,22 +68,30 @@ input {
 }
 
 .tile {
-    background: #f0f0f0;
     border-radius: 10px;
     padding: 20px;
     text-align: center;
     font-weight: bold;
+    color: white;
     cursor: pointer;
-    transition: background 0.2s, transform 0.1s;
+    transition: transform 0.1s, filter 0.2s;
 }
 
 .tile:hover {
-    background: #e0e0e0;
-    transform: scale(1.02);
+    filter: brightness(1.1);
 }
 
 .tile:active {
-    transform: scale(0.98);
+    transform: scale(0.97);
+}
+
+/* Kleuren */
+.green { background: #4caf50; }
+.blue  { background: #2196f3; }
+.red   { background: #f44336; }
+.yellow {
+    background: #fbc02d;
+    color: black;
 }
 </style>
 </head>
@@ -72,24 +99,35 @@ input {
 <body>
 
 <div class="app">
-    <h1>Machines</h1>
 
-    <label>Product nu</label>
-    <input type="text" placeholder="Huidig product">
-
-    <label>Product na ombouw</label>
-    <input type="text" placeholder="Nieuw product">
-
-    <div class="tiles">
-        <div class="tile">Depal</div>
-        <div class="tile">Blik3</div>
-        <div class="tile">Blik4</div>
-        <div class="tile">SP1</div>
-        <div class="tile">WSP</div>
-        <div class="tile">TSP</div>
-        <div class="tile">SP2</div>
-        <div class="tile">Pal</div>
+    <div class="header">
+        <!-- Logo vervangen door jouw eigen bestand -->
+        <img src="ym.png" alt="YM">
+        <h1>Ombouw</h1>
     </div>
+
+    <div class="content">
+        <label>Product nu</label>
+        <input type="text" placeholder="Huidig product">
+
+        <label>Product na ombouw</label>
+        <input type="text" placeholder="Nieuw product">
+
+        <div class="tiles">
+            <div class="tile green">Depal</div>
+
+            <div class="tile blue">Blik3</div>
+            <div class="tile blue">Blik4</div>
+
+            <div class="tile red">SP1</div>
+            <div class="tile red">WSP</div>
+            <div class="tile red">TSP</div>
+            <div class="tile red">SP2</div>
+
+            <div class="tile yellow">Pal</div>
+        </div>
+    </div>
+
 </div>
 
 </body>
