@@ -12,15 +12,7 @@ body{font-family:Arial;background:#f5f5f5;padding:20px;}
 .header h1{margin:0;font-size:20px;}
 .content{padding:20px;}
 .back{display:inline-block;margin-bottom:15px;text-decoration:none;color:#2e7d32;font-weight:bold;}
-
-.switch{
-    background:#f7f7f7;
-    padding:10px;
-    border-radius:6px;
-    margin-bottom:15px;
-    font-size:14px;
-}
-
+.switch{background:#f7f7f7;padding:10px;border-radius:6px;margin-bottom:15px;font-size:14px;}
 .list{list-style:none;padding:0;}
 .list li{padding:10px;border-bottom:1px solid #ddd;}
 .item-name{font-weight:bold;}
@@ -31,7 +23,7 @@ body{font-family:Arial;background:#f5f5f5;padding:20px;}
 
 <div class="app">
     <div class="header">
-        <img src="ym.png">
+        <img src="ym.png" alt="Logo">
         <h1>Depal</h1>
     </div>
 
@@ -39,28 +31,84 @@ body{font-family:Arial;background:#f5f5f5;padding:20px;}
         <a class="back" href="index.html">← Terug</a>
 
         <div class="switch">
-            Ombouw van:
-            <strong>Omschrijving oud artikel</strong>
-            →
-            <strong>Omschrijving nieuw artikel</strong>
+            Ombouw van: <strong id="omschrijvingOud">—</strong> → <strong id="omschrijvingNieuw">—</strong>
         </div>
 
         <ul class="list">
-            <li>
+            <li class="switch-row" data-field="artikelnummer">
                 <div class="item-name">Artikelnummer</div>
                 <div class="item-value">— → —</div>
             </li>
-            <li>
+            <li class="switch-row" data-field="blikinhoud">
                 <div class="item-name">Blikinhoud</div>
                 <div class="item-value">— → —</div>
             </li>
-            <li>
+            <li class="switch-row" data-field="blik">
                 <div class="item-name">Blik</div>
                 <div class="item-value">— → —</div>
             </li>
         </ul>
     </div>
 </div>
+
+<!-- Firebase Web SDKs -->
+<script src="https://www.gstatic.com/firebasejs/12.7.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/12.7.0/firebase-firestore-compat.js"></script>
+
+<script>
+// 🔹 Firestore configuratie (vul hier jouw eigen config in)
+const firebaseConfig = {
+  apiKey:"AIzaSyBtV-MNtSxf7mJ5RM5dS_5MeRdpcOMy6a4",
+  authDomain:"productiedatabase.firebaseapp.com",
+  projectId:"productiedatabase",
+  storageBucket:"productiedatabase.firebasestorage.app",
+  messagingSenderId:"269980901692",
+  appId:"1:269980901692:web:642b70f033694811817e39"
+};
+
+// Initialize Firebase
+firebase.initializeApp(firebaseConfig);
+
+// Firestore database referentie
+const db = firebase.firestore();
+
+// Document ID ophalen (bijvoorbeeld via URL of localStorage)
+const docId = localStorage.getItem("productNu") || "standaardDocumentId";
+
+// Haal document op uit 'productiedatabase'
+db.collection("productiedatabase").doc(docId).get()
+  .then(docSnap => {
+    if (docSnap.exists) {
+      const data = docSnap.data();
+
+      // Veld 'omschrijving oud' en 'omschrijving nieuw' tonen
+      document.getElementById("omschrijvingOud").textContent = data.omschrijving?.oud || "—";
+      document.getElementById("omschrijvingNieuw").textContent = data.omschrijving?.nieuw || "—";
+
+      // Vul alle switch‑regels
+      document.querySelectorAll('.switch-row').forEach(row => {
+        const field = row.dataset.field;
+        if (data[field]) {
+          const oud = data[field].oud || "";
+          const nieuw = data[field].nieuw || "";
+          if (oud || nieuw) {
+            row.querySelector('.item-value').textContent = `${oud || '—'} → ${nieuw || '—'}`;
+          } else {
+            row.style.display = 'none';
+          }
+        } else {
+          row.style.display = 'none';
+        }
+      });
+
+    } else {
+      console.error("Geen document gevonden!");
+    }
+  })
+  .catch(error => {
+    console.error("Fout bij ophalen:", error);
+  });
+</script>
 
 </body>
 </html>

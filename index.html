@@ -4,111 +4,63 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Ombouw</title>
-
 <style>
-body {
-    font-family: Arial, sans-serif;
-    background: #f5f5f5;
-    padding: 20px;
-}
-
-.app {
-    max-width: 400px;
-    margin: auto;
-    background: white;
-    border-radius: 12px;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-    overflow: hidden;
-}
-
-/* Header */
-.header {
-    background: #2e7d32;
-    color: white;
-    padding: 12px;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
-
-.header img { height: 32px; }
-.header h1 { margin: 0; font-size: 20px; }
-
-/* Sticky inputs */
-.sticky {
-    position: sticky;
-    top: 0;
-    background: white;
-    padding: 15px;
-    border-bottom: 1px solid #ddd;
-    z-index: 10;
-}
-
-label {
-    font-weight: bold;
-    display: block;
-    margin-top: 8px;
-}
-
-input {
-    width: 100%;
-    padding: 8px;
-    margin-top: 4px;
-    border-radius: 6px;
-    border: 1px solid #ccc;
-}
-
-/* Tiles */
-.tiles {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 12px;
-    padding: 15px;
-}
-
-.tile {
-    background: #f7f7f7;
-    border-radius: 10px;
-    padding: 20px;
-    font-weight: bold;
-    color: #222;
-    text-decoration: none;
-    border-left: 8px solid transparent;
-}
-
-.green { border-left-color: #4caf50; }
-.blue { border-left-color: #2196f3; }
-.red { border-left-color: #f44336; }
-.yellow { border-left-color: #fbc02d; }
+body{font-family:Arial;background:#f5f5f5;padding:20px;}
+.header{background:#2e7d32;color:white;padding:12px;display:flex;align-items:center;gap:10px;}
+.header img{height:32px;}
+.header h1{margin:0;font-size:20px;}
+.content{padding:20px;}
+.input-group{display:flex;flex-direction:column;gap:10px;margin-bottom:20px;}
+input{padding:8px;border-radius:6px;border:1px solid #ccc;font-size:14px;}
+.tiles{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;}
+.tile{padding:20px;color:white;text-align:center;font-weight:bold;border-radius:8px;text-decoration:none;display:flex;align-items:center;justify-content:center;height:80px;}
+.tile.green{background:#2e7d32;}
+.tile.blue{background:#2196f3;}
+.tile.red{background:#f44336;}
+.tile.yellow{background:#ff9800;}
 </style>
 </head>
-
 <body>
 
-<div class="app">
-    <div class="header">
-        <img src="ym.png">
-        <h1>Ombouw</h1>
-    </div>
+<div class="header">
+    <img src="ym.png" alt="Logo">
+    <h1>Ombouw</h1>
+</div>
 
-    <div class="sticky">
-        <label>Product nu</label>
-        <input type="text">
-        <label>Product na ombouw</label>
-        <input type="text">
+<div class="content">
+    <div class="input-group">
+        <input type="text" id="productNu" placeholder="Product nu" oninput="saveProducts()">
+        <input type="text" id="productNa" placeholder="Product na" oninput="saveProducts()">
     </div>
 
     <div class="tiles">
-        <a class="tile green" href="depal.html">Depal</a>
-        <a class="tile blue" href="blik3.html">Blik3</a>
-        <a class="tile blue" href="blik4.html">Blik4</a>
-        <a class="tile red" href="sp1.html">SP1</a>
-        <a class="tile red" href="wsp.html">WSP</a>
-        <a class="tile red" href="tsp.html">TSP</a>
-        <a class="tile red" href="sp2.html">SP2</a>
-        <a class="tile yellow" href="pal.html">Pal</a>
+        <a href="depal.html" class="tile green">Depal</a>
+        <a href="blik3.html" class="tile blue">Blik3</a>
+        <a href="blik4.html" class="tile blue">Blik4</a>
+        <a href="#" class="tile red">SP1</a>
+        <a href="#" class="tile red">WSP</a>
+        <a href="#" class="tile red">TSP</a>
+        <a href="#" class="tile red">SP2</a>
+        <a href="#" class="tile yellow">Pal</a>
     </div>
 </div>
+
+<script>
+function saveProducts() {
+    const nu = document.getElementById("productNu").value.trim();
+    const na = document.getElementById("productNa").value.trim();
+    localStorage.setItem("productNu", nu);
+    localStorage.setItem("productNa", na);
+}
+
+// Vul de inputs bij het laden als er iets in localStorage staat
+window.addEventListener('load', () => {
+    const nu = localStorage.getItem("productNu") || "";
+    const na = localStorage.getItem("productNa") || "";
+    document.getElementById("productNu").value = nu;
+    document.getElementById("productNa").value = na;
+});
+</script>
 
 </body>
 </html>
