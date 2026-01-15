@@ -8,55 +8,49 @@
 <style>
 body {
     font-family: Arial, sans-serif;
-    padding: 20px;
+    margin: 0;
     background: #f5f5f5;
-}
-
-.app {
-    max-width: 400px;
-    margin: auto;
-    background: white;
-    border-radius: 12px;
-    overflow: hidden;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
 }
 
 /* Titelbalk */
 .header {
-    background: #2e7d32;
+    background: #4caf50;
     color: white;
-    padding: 12px;
+    padding: 12px 15px;
     display: flex;
     align-items: center;
-    gap: 10px;
+    justify-content: space-between;
+}
+
+.header h1 {
+    font-size: 20px;
+    margin: 0;
 }
 
 .header img {
     height: 32px;
 }
 
-.header h1 {
-    margin: 0;
-    font-size: 20px;
+/* App container */
+.app {
+    max-width: 400px;
+    margin: auto;
+    padding: 15px;
 }
 
-/* Content */
-.content {
-    padding: 20px;
-}
-
+/* Product invoer */
 .inputs {
     display: flex;
     flex-direction: column;
-    gap: 10px;
-    margin-bottom: 20px;
+    gap: 8px;
+    margin-bottom: 15px;
 }
 
 .inputs input {
     padding: 10px;
+    font-size: 14px;
     border-radius: 6px;
     border: 1px solid #ccc;
-    font-size: 14px;
 }
 
 /* Tegels */
@@ -69,55 +63,75 @@ body {
 .tile {
     height: 70px;
     border-radius: 8px;
-    color: white;
+    background: white;
     font-weight: bold;
     display: flex;
     align-items: center;
     justify-content: center;
     text-decoration: none;
     font-size: 15px;
+    border: 3px solid;
 }
 
 /* Kleuren */
-.green { background: #4caf50; }
-.blue  { background: #2196f3; }
-.red   { background: #f44336; }
-.yellow{ background: #ff9800; }
+.green {
+    border-color: #4caf50;
+    color: #4caf50;
+}
+
+.blue {
+    border-color: #2196f3;
+    color: #2196f3;
+}
+
+.red {
+    border-color: #f44336;
+    color: #f44336;
+}
+
+.yellow {
+    border-color: #ff9800;
+    color: #ff9800;
+}
 </style>
 </head>
 
 <body>
 
+<!-- Titelbalk -->
+<div class="header">
+    <h1>Ombouw</h1>
+    <img src="ym.png" alt="Logo">
+</div>
+
+<!-- App -->
 <div class="app">
-    <div class="header">
-        <img src="ym.png" alt="Logo">
-        <h1>Ombouw</h1>
+
+    <!-- Invoer -->
+    <div class="inputs">
+        <input type="text" id="productNu" placeholder="Huidig artikel" oninput="saveProducts()">
+        <input type="text" id="productNa" placeholder="Nieuw artikel" oninput="saveProducts()">
     </div>
 
-    <div class="content">
+    <!-- Tegels -->
+    <div class="tiles">
+        <!-- Groen -->
+        <a href="depal.html" class="tile green">Depal</a>
 
-        <!-- Vaste invoervelden -->
-        <div class="inputs">
-            <input type="text" id="productNu" placeholder="Product nu">
-            <input type="text" id="productNa" placeholder="Product na">
-        </div>
+        <!-- Blauw -->
+        <a href="blik3.html" class="tile blue">Blik 3</a>
+        <a href="blik4.html" class="tile blue">Blik 4</a>
 
-        <!-- Tegels -->
-        <div class="tiles">
-            <a href="depal.html" class="tile green">Depal</a>
+        <!-- Rood -->
+        <a href="sp1.html" class="tile red">SP1</a>
+        <a href="wsp.html" class="tile red">WSP</a>
+        <a href="tsp.html" class="tile red">TSP</a>
+        <a href="sp2.html" class="tile red">SP2</a>
 
-            <a href="blik3.html" class="tile blue">Blik3</a>
-            <a href="blik4.html" class="tile blue">Blik4</a>
-
-            <a href="#" class="tile red">SP1</a>
-            <a href="#" class="tile red">WSP</a>
-            <a href="#" class="tile red">TSP</a>
-            <a href="#" class="tile red">SP2</a>
-
-            <a href="#" class="tile yellow">Pal</a>
-        </div>
-
+        <!-- Geel -->
+        <a href="pal.html" class="tile yellow">Pal</a>
     </div>
+
 </div>
 
 <script>
@@ -126,13 +140,11 @@ function saveProducts() {
     localStorage.setItem("productNa", document.getElementById("productNa").value);
 }
 
-document.getElementById("productNu").addEventListener("input", saveProducts);
-document.getElementById("productNa").addEventListener("input", saveProducts);
-
-window.addEventListener("load", () => {
+// Bij laden: waarden terugzetten
+window.onload = () => {
     document.getElementById("productNu").value = localStorage.getItem("productNu") || "";
     document.getElementById("productNa").value = localStorage.getItem("productNa") || "";
-});
+};
 </script>
 
 </body>
