@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Depal</title>
+<title>Ombouw</title>
 
 <style>
 body {
@@ -14,8 +14,8 @@ body {
 
 /* Titelbalk */
 .header {
-    background: #e8f5e9;
-    color: #2e7d32;
+    background: #4caf50;
+    color: white;
     padding: 12px 15px;
     display: flex;
     align-items: center;
@@ -23,145 +23,128 @@ body {
 }
 
 .header h1 {
-    font-size: 18px;
+    font-size: 20px;
     margin: 0;
 }
 
 .header img {
-    height: 30px;
+    height: 32px;
 }
 
-/* App */
+/* App container */
 .app {
     max-width: 400px;
     margin: auto;
     padding: 15px;
 }
 
-/* Ombouw info */
-.switch-info {
-    background: white;
-    border-radius: 6px;
-    padding: 10px;
+/* Product invoer */
+.inputs {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
     margin-bottom: 15px;
-    font-size: 14px;
 }
 
-/* Rijen */
-.switch-row {
-    display: none;
-    background: white;
-    border-radius: 6px;
+.inputs input {
     padding: 10px;
-    margin-bottom: 8px;
-}
-
-.switch-row strong {
-    display: block;
-    font-size: 13px;
-    color: #555;
-}
-
-.switch-row span {
     font-size: 14px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
 }
 
-/* Terugknop */
-.back {
-    margin-bottom: 10px;
-    display: inline-block;
+/* Tegels */
+.tiles {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+}
+
+.tile {
+    height: 70px;
+    border-radius: 8px;
+    background: white;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     text-decoration: none;
-    color: #2e7d32;
-    font-size: 14px;
+    font-size: 15px;
+    border: 3px solid;
+}
+
+/* Kleuren */
+.green {
+    border-color: #4caf50;
+    color: #4caf50;
+}
+
+.blue {
+    border-color: #2196f3;
+    color: #2196f3;
+}
+
+.red {
+    border-color: #f44336;
+    color: #f44336;
+}
+
+.yellow {
+    border-color: #ff9800;
+    color: #ff9800;
 }
 </style>
 </head>
 
 <body>
 
-<!-- Titel -->
+<!-- Titelbalk -->
 <div class="header">
-    <h1>Depal</h1>
+    <h1>Ombouw</h1>
     <img src="ym.png" alt="Logo">
 </div>
 
+<!-- App -->
 <div class="app">
 
-    <a href="index.html" class="back">← Terug</a>
-
-    <div class="switch-info" id="switchInfo">
-        Ombouw van … → …
+    <!-- Invoer -->
+    <div class="inputs">
+        <input type="text" id="productNu" placeholder="Huidig artikel" oninput="saveProducts()">
+        <input type="text" id="productNa" placeholder="Nieuw artikel" oninput="saveProducts()">
     </div>
 
-    <!-- Rijen -->
-    <div class="switch-row" data-field="artikelnummer">
-        <strong>Artikelnummer</strong>
-        <span></span>
-    </div>
+    <!-- Tegels -->
+    <div class="tiles">
+        <!-- Groen -->
+        <a href="depal.html" class="tile green">Depal</a>
 
-    <div class="switch-row" data-field="blikinhoud">
-        <strong>Blikinhoud</strong>
-        <span></span>
-    </div>
+        <!-- Blauw -->
+        <a href="blik3.html" class="tile blue">Blik 3</a>
+        <a href="blik4.html" class="tile blue">Blik 4</a>
 
-    <div class="switch-row" data-field="blik">
-        <strong>Blik</strong>
-        <span></span>
+        <!-- Rood -->
+        <a href="sp1.html" class="tile red">SP1</a>
+        <a href="wsp.html" class="tile red">WSP</a>
+        <a href="tsp.html" class="tile red">TSP</a>
+        <a href="sp2.html" class="tile red">SP2</a>
+
+        <!-- Geel -->
+        <a href="pal.html" class="tile yellow">Pal</a>
     </div>
 
 </div>
 
-<!-- Firestore -->
-<script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
-import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
-
-/* 🔧 JOUW CONFIG */
-const firebaseConfig = {
-    apiKey: "AIzaSyBtV-MNtSxf7mJ5RM5dS_5MeRdpcOMy6a4",
-    authDomain: "productiedatabase.firebaseapp.com",
-    projectId: "productiedatabase"
-    storageBucket:"productiedatabase.firebasestorage.app",
-    messagingSenderId:"269980901692",
-    appId:"1:269980901692:web:642b70f033694811817e39"
-};
-
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
-
-/* Artikels uit localStorage */
-const artikelNu = localStorage.getItem("productNu");
-const artikelNa = localStorage.getItem("productNa");
-
-async function loadData() {
-    if (!artikelNu || !artikelNa) return;
-
-    const oudSnap = await getDoc(doc(db, "productiedatabase", artikelNu));
-    const nieuwSnap = await getDoc(doc(db, "productiedatabase", artikelNa));
-
-    if (!oudSnap.exists() || !nieuwSnap.exists()) return;
-
-    const oud = oudSnap.data();
-    const nieuw = nieuwSnap.data();
-
-    /* Ombouwtekst met OMSCHRIJVING */
-    document.getElementById("switchInfo").innerText =
-        `Ombouw van ${oud.omschrijving || artikelNu} → ${nieuw.omschrijving || artikelNa}`;
-
-    document.querySelectorAll(".switch-row").forEach(row => {
-        const field = row.dataset.field;
-        const oldVal = oud[field] || "";
-        const newVal = nieuw[field] || "";
-
-        if (oldVal || newVal) {
-            row.style.display = "block";
-            row.querySelector("span").innerText =
-                `${oldVal || "-"} → ${newVal || "-"}`;
-        }
-    });
+<script>
+function saveProducts() {
+    localStorage.setItem("productNu", document.getElementById("productNu").value);
+    localStorage.setItem("productNa", document.getElementById("productNa").value);
 }
 
-loadData();
+// Bij laden: waarden terugzetten
+window.onload = () => {
+    document.getElementById("productNu").value = localStorage.getItem("productNu") || "";
+    document.getElementById("productNa").value = localStorage.getItem("productNa") || "";
+};
 </script>
 
 </body>
