@@ -12,7 +12,6 @@ body {
     background: #f5f5f5;
 }
 
-/* Titelbalk */
 .header {
     background: #4caf50;
     color: white;
@@ -31,14 +30,12 @@ body {
     height: 32px;
 }
 
-/* App container */
 .app {
     max-width: 400px;
     margin: auto;
     padding: 15px;
 }
 
-/* Product invoer */
 .inputs {
     display: flex;
     flex-direction: column;
@@ -53,7 +50,6 @@ body {
     border: 1px solid #ccc;
 }
 
-/* Tegels */
 .tiles {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
@@ -73,77 +69,49 @@ body {
     border: 3px solid;
 }
 
-/* Kleuren */
-.green {
-    border-color: #4caf50;
-    color: #4caf50;
-}
-
-.blue {
-    border-color: #2196f3;
-    color: #2196f3;
-}
-
-.red {
-    border-color: #f44336;
-    color: #f44336;
-}
-
-.yellow {
-    border-color: #ff9800;
-    color: #ff9800;
-}
+.green { border-color: #4caf50; color: #4caf50; }
+.blue  { border-color: #2196f3; color: #2196f3; }
+.red   { border-color: #f44336; color: #f44336; }
+.yellow{ border-color: #ff9800; color: #ff9800; }
 </style>
 </head>
 
 <body>
 
-<!-- Titelbalk -->
 <div class="header">
     <h1>Ombouw</h1>
     <img src="ym.png" alt="Logo">
 </div>
 
-<!-- App -->
 <div class="app">
 
-    <!-- Invoer -->
     <div class="inputs">
-        <input type="text" id="productNu" placeholder="Huidig artikel" oninput="saveProducts()">
-        <input type="text" id="productNa" placeholder="Nieuw artikel" oninput="saveProducts()">
+        <input id="productNu" placeholder="Huidig artikel" oninput="save()">
+        <input id="productNa" placeholder="Nieuw artikel" oninput="save()">
     </div>
 
-    <!-- Tegels -->
     <div class="tiles">
-        <!-- Groen -->
         <a href="depal.html" class="tile green">Depal</a>
-
-        <!-- Blauw -->
         <a href="blik3.html" class="tile blue">Blik 3</a>
         <a href="blik4.html" class="tile blue">Blik 4</a>
-
-        <!-- Rood -->
         <a href="sp1.html" class="tile red">SP1</a>
         <a href="wsp.html" class="tile red">WSP</a>
         <a href="tsp.html" class="tile red">TSP</a>
         <a href="sp2.html" class="tile red">SP2</a>
-
-        <!-- Geel -->
         <a href="pal.html" class="tile yellow">Pal</a>
     </div>
 
 </div>
 
 <script>
-function saveProducts() {
-    localStorage.setItem("productNu", document.getElementById("productNu").value);
-    localStorage.setItem("productNa", document.getElementById("productNa").value);
+function save() {
+    localStorage.setItem("productNu", productNu.value.trim());
+    localStorage.setItem("productNa", productNa.value.trim());
 }
 
-// Bij laden: waarden terugzetten
 window.onload = () => {
-    document.getElementById("productNu").value = localStorage.getItem("productNu") || "";
-    document.getElementById("productNa").value = localStorage.getItem("productNa") || "";
+    productNu.value = localStorage.getItem("productNu") || "";
+    productNa.value = localStorage.getItem("productNa") || "";
 };
 </script>
 

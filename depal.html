@@ -6,159 +6,80 @@
 <title>Depal</title>
 
 <style>
-body {
-    font-family: Arial, sans-serif;
-    margin: 0;
-    background: #f5f5f5;
-}
+body { font-family: Arial; margin: 0; background: #f5f5f5; }
 
-/* Titelbalk */
 .header {
     background: #e8f5e9;
     color: #2e7d32;
     padding: 12px 15px;
     display: flex;
-    align-items: center;
     justify-content: space-between;
 }
 
-.header h1 {
-    font-size: 18px;
-    margin: 0;
-}
+.app { max-width: 400px; margin: auto; padding: 15px; }
 
-.header img {
-    height: 30px;
-}
+.back { text-decoration: none; color: #2e7d32; font-size: 14px; }
 
-/* App */
-.app {
-    max-width: 400px;
-    margin: auto;
-    padding: 15px;
-}
-
-/* Ombouw info */
-.switch-info {
+.switch-info, .row {
     background: white;
     border-radius: 6px;
     padding: 10px;
-    margin-bottom: 15px;
-    font-size: 14px;
-}
-
-/* Rijen */
-.switch-row {
-    display: none;
-    background: white;
-    border-radius: 6px;
-    padding: 10px;
-    margin-bottom: 8px;
-}
-
-.switch-row strong {
-    display: block;
-    font-size: 13px;
-    color: #555;
-}
-
-.switch-row span {
-    font-size: 14px;
-}
-
-/* Terugknop */
-.back {
     margin-bottom: 10px;
-    display: inline-block;
-    text-decoration: none;
-    color: #2e7d32;
-    font-size: 14px;
 }
+
+.row { display: none; }
+.row strong { display: block; font-size: 13px; color: #555; }
 </style>
 </head>
 
 <body>
 
-<!-- Titel -->
 <div class="header">
     <h1>Depal</h1>
-    <img src="ym.png" alt="Logo">
+    <img src="ym.png" height="30">
 </div>
 
 <div class="app">
+<a href="index.html" class="back">← Terug</a>
 
-    <a href="index.html" class="back">← Terug</a>
+<div id="info" class="switch-info">Ombouw van … → …</div>
 
-    <div class="switch-info" id="switchInfo">
-        Ombouw van … → …
-    </div>
-
-    <!-- Rijen -->
-    <div class="switch-row" data-field="artikelnummer">
-        <strong>Artikelnummer</strong>
-        <span></span>
-    </div>
-
-    <div class="switch-row" data-field="blikinhoud">
-        <strong>Blikinhoud</strong>
-        <span></span>
-    </div>
-
-    <div class="switch-row" data-field="blik">
-        <strong>Blik</strong>
-        <span></span>
-    </div>
-
+<div class="row" data-field="artikelnummer"><strong>Artikelnummer</strong><span></span></div>
+<div class="row" data-field="blikinhoud"><strong>Blikinhoud</strong><span></span></div>
+<div class="row" data-field="blik"><strong>Blik</strong><span></span></div>
 </div>
 
-<!-- Firestore -->
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
 import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
 
-/* 🔧 JOUW CONFIG */
 const firebaseConfig = {
-    apiKey:"AIzaSyBtV-MNtSxf7mJ5RM5dS_5MeRdpcOMy6a4",
-    authDomain:"productiedatabase.firebaseapp.com",
-    projectId:"productiedatabase",
+    apiKey: "AIzaSyBtV-MNtSxf7mJ5RM5dS_5MeRdpcOMy6a4",
+    authDomain: "productiedatabase.firebaseapp.com",
+    projectId: "productiedatabase",
+    storageBucket: "productiedatabase.firebasestorage.app",
+    messagingSenderId: "269980901692",
+    appId: "1:269980901692:web:642b70f033694811817e39"
 };
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-/* Artikels uit localStorage */
-const artikelNu = localStorage.getItem("productNu");
-const artikelNa = localStorage.getItem("productNa");
+const oudId = localStorage.getItem("productNu");
+const nieuwId = localStorage.getItem("productNa");
 
-async function loadData() {
-    if (!artikelNu || !artikelNa) return;
+const oud = (await getDoc(doc(db,"productiedatabase",oudId))).data();
+const nieuw = (await getDoc(doc(db,"productiedatabase",nieuwId))).data();
 
-    const oudSnap = await getDoc(doc(db, "productiedatabase", artikelNu));
-    const nieuwSnap = await getDoc(doc(db, "productiedatabase", artikelNa));
+info.innerText = `Ombouw van ${oud.omschrijving} → ${nieuw.omschrijving}`;
 
-    if (!oudSnap.exists() || !nieuwSnap.exists()) return;
-
-    const oud = oudSnap.data();
-    const nieuw = nieuwSnap.data();
-
-    /* Ombouwtekst met OMSCHRIJVING */
-    document.getElementById("switchInfo").innerText =
-        `Ombouw van ${oud.omschrijving || artikelNu} → ${nieuw.omschrijving || artikelNa}`;
-
-    document.querySelectorAll(".switch-row").forEach(row => {
-        const field = row.dataset.field;
-        const oldVal = oud[field] || "";
-        const newVal = nieuw[field] || "";
-
-        if (oldVal || newVal) {
-            row.style.display = "block";
-            row.querySelector("span").innerText =
-                `${oldVal || "-"} → ${newVal || "-"}`;
-        }
-    });
-}
-
-loadData();
+document.querySelectorAll(".row").forEach(r=>{
+    const f=r.dataset.field;
+    if(oud[f]||nieuw[f]){
+        r.style.display="block";
+        r.querySelector("span").innerText=`${oud[f]||"-"} → ${nieuw[f]||"-"}`;
+    }
+});
 </script>
 
 </body>
