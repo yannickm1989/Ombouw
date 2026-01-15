@@ -4,110 +4,161 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Depal</title>
+
 <style>
-body{font-family:Arial;background:#f5f5f5;padding:20px;}
-.app{max-width:400px;margin:auto;background:white;border-radius:12px;box-shadow:0 4px 10px rgba(0,0,0,0.1);overflow:hidden;}
-.header{background:#2e7d32;color:white;padding:12px;display:flex;align-items:center;gap:10px;border-bottom:4px solid #4caf50;}
-.header img{height:32px;}
-.header h1{margin:0;font-size:20px;}
-.content{padding:20px;}
-.back{display:inline-block;margin-bottom:15px;text-decoration:none;color:#2e7d32;font-weight:bold;}
-.switch{background:#f7f7f7;padding:10px;border-radius:6px;margin-bottom:15px;font-size:14px;}
-.list{list-style:none;padding:0;}
-.list li{padding:10px;border-bottom:1px solid #ddd;}
-.item-name{font-weight:bold;}
-.item-value{font-size:14px;color:#555;}
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    background: #f5f5f5;
+}
+
+/* Titelbalk */
+.header {
+    background: #e8f5e9;
+    color: #2e7d32;
+    padding: 12px 15px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.header h1 {
+    font-size: 18px;
+    margin: 0;
+}
+
+.header img {
+    height: 30px;
+}
+
+/* App */
+.app {
+    max-width: 400px;
+    margin: auto;
+    padding: 15px;
+}
+
+/* Ombouw info */
+.switch-info {
+    background: white;
+    border-radius: 6px;
+    padding: 10px;
+    margin-bottom: 15px;
+    font-size: 14px;
+}
+
+/* Rijen */
+.switch-row {
+    display: none;
+    background: white;
+    border-radius: 6px;
+    padding: 10px;
+    margin-bottom: 8px;
+}
+
+.switch-row strong {
+    display: block;
+    font-size: 13px;
+    color: #555;
+}
+
+.switch-row span {
+    font-size: 14px;
+}
+
+/* Terugknop */
+.back {
+    margin-bottom: 10px;
+    display: inline-block;
+    text-decoration: none;
+    color: #2e7d32;
+    font-size: 14px;
+}
 </style>
 </head>
+
 <body>
 
-<div class="app">
-    <div class="header">
-        <img src="ym.png" alt="Logo">
-        <h1>Depal</h1>
-    </div>
-
-    <div class="content">
-        <a class="back" href="index.html">← Terug</a>
-
-        <div class="switch">
-            Ombouw van: <strong id="omschrijvingOud">—</strong> → <strong id="omschrijvingNieuw">—</strong>
-        </div>
-
-        <ul class="list">
-            <li class="switch-row" data-field="artikelnummer">
-                <div class="item-name">Artikelnummer</div>
-                <div class="item-value">— → —</div>
-            </li>
-            <li class="switch-row" data-field="blikinhoud">
-                <div class="item-name">Blikinhoud</div>
-                <div class="item-value">— → —</div>
-            </li>
-            <li class="switch-row" data-field="blik">
-                <div class="item-name">Blik</div>
-                <div class="item-value">— → —</div>
-            </li>
-        </ul>
-    </div>
+<!-- Titel -->
+<div class="header">
+    <h1>Depal</h1>
+    <img src="ym.png" alt="Logo">
 </div>
 
-<!-- Firebase Web SDKs -->
-<script src="https://www.gstatic.com/firebasejs/12.7.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/12.7.0/firebase-firestore-compat.js"></script>
+<div class="app">
 
-<script>
-// 🔹 Firestore configuratie (vul hier jouw eigen config in)
+    <a href="index.html" class="back">← Terug</a>
+
+    <div class="switch-info" id="switchInfo">
+        Ombouw van … → …
+    </div>
+
+    <!-- Rijen -->
+    <div class="switch-row" data-field="artikelnummer">
+        <strong>Artikelnummer</strong>
+        <span></span>
+    </div>
+
+    <div class="switch-row" data-field="blikinhoud">
+        <strong>Blikinhoud</strong>
+        <span></span>
+    </div>
+
+    <div class="switch-row" data-field="blik">
+        <strong>Blik</strong>
+        <span></span>
+    </div>
+
+</div>
+
+<!-- Firestore -->
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
+import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
+
+/* 🔧 JOUW CONFIG */
 const firebaseConfig = {
-  apiKey:"AIzaSyBtV-MNtSxf7mJ5RM5dS_5MeRdpcOMy6a4",
-  authDomain:"productiedatabase.firebaseapp.com",
-  projectId:"productiedatabase",
-  storageBucket:"productiedatabase.firebasestorage.app",
-  messagingSenderId:"269980901692",
-  appId:"1:269980901692:web:642b70f033694811817e39"
+    apiKey: "JOUW_API_KEY",
+    authDomain: "JOUW_PROJECT.firebaseapp.com",
+    projectId: "JOUW_PROJECT_ID"
 };
 
-// Initialize Firebase
-firebase.initializeApp(firebaseConfig);
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
 
-// Firestore database referentie
-const db = firebase.firestore();
+/* Artikels uit localStorage */
+const artikelNu = localStorage.getItem("productNu");
+const artikelNa = localStorage.getItem("productNa");
 
-// Document ID ophalen (bijvoorbeeld via URL of localStorage)
-const docId = localStorage.getItem("productNu") || "standaardDocumentId";
+async function loadData() {
+    if (!artikelNu || !artikelNa) return;
 
-// Haal document op uit 'productiedatabase'
-db.collection("productiedatabase").doc(docId).get()
-  .then(docSnap => {
-    if (docSnap.exists) {
-      const data = docSnap.data();
+    const oudSnap = await getDoc(doc(db, "productiedatabase", artikelNu));
+    const nieuwSnap = await getDoc(doc(db, "productiedatabase", artikelNa));
 
-      // Veld 'omschrijving oud' en 'omschrijving nieuw' tonen
-      document.getElementById("omschrijvingOud").textContent = data.omschrijving?.oud || "—";
-      document.getElementById("omschrijvingNieuw").textContent = data.omschrijving?.nieuw || "—";
+    if (!oudSnap.exists() || !nieuwSnap.exists()) return;
 
-      // Vul alle switch‑regels
-      document.querySelectorAll('.switch-row').forEach(row => {
+    const oud = oudSnap.data();
+    const nieuw = nieuwSnap.data();
+
+    /* Ombouwtekst met OMSCHRIJVING */
+    document.getElementById("switchInfo").innerText =
+        `Ombouw van ${oud.omschrijving || artikelNu} → ${nieuw.omschrijving || artikelNa}`;
+
+    document.querySelectorAll(".switch-row").forEach(row => {
         const field = row.dataset.field;
-        if (data[field]) {
-          const oud = data[field].oud || "";
-          const nieuw = data[field].nieuw || "";
-          if (oud || nieuw) {
-            row.querySelector('.item-value').textContent = `${oud || '—'} → ${nieuw || '—'}`;
-          } else {
-            row.style.display = 'none';
-          }
-        } else {
-          row.style.display = 'none';
-        }
-      });
+        const oldVal = oud[field] || "";
+        const newVal = nieuw[field] || "";
 
-    } else {
-      console.error("Geen document gevonden!");
-    }
-  })
-  .catch(error => {
-    console.error("Fout bij ophalen:", error);
-  });
+        if (oldVal || newVal) {
+            row.style.display = "block";
+            row.querySelector("span").innerText =
+                `${oldVal || "-"} → ${newVal || "-"}`;
+        }
+    });
+}
+
+loadData();
 </script>
 
 </body>
