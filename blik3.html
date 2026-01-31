@@ -7,10 +7,26 @@
 
 <style>
 body { font-family: Arial; margin: 0; background: #f5f5f5; }
-.header { background: #e3f2fd; color: #1565c0; padding: 12px 15px; display: flex; justify-content: space-between; }
+
+.header {
+    background: #e3f2fd;
+    color: #1565c0;
+    padding: 12px 15px;
+    display: flex;
+    justify-content: space-between;
+}
+
 .app { max-width: 400px; margin: auto; padding: 15px; }
+
 .back { text-decoration: none; color: #1565c0; font-size: 14px; }
-.switch-info, .row { background: white; border-radius: 6px; padding: 10px; margin-bottom: 10px; }
+
+.switch-info, .row {
+    background: white;
+    border-radius: 6px;
+    padding: 10px;
+    margin-bottom: 10px;
+}
+
 .row { display: none; }
 .row strong { display: block; font-size: 13px; color: #555; }
 </style>
@@ -42,7 +58,7 @@ body { font-family: Arial; margin: 0; background: #f5f5f5; }
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
-import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
+import { getFirestore, getDocs, collection } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
 
 const firebaseConfig = {
     apiKey: "AIzaSyBtV-MNtSxf7mJ5RM5dS_5MeRdpcOMy6a4",
@@ -50,29 +66,36 @@ const firebaseConfig = {
     projectId: "productiedatabase",
     storageBucket: "productiedatabase.firebasestorage.app",
     messagingSenderId: "269980901692",
-    appId: "1:269980901692:web:642b70f033694811e39"
+    appId: "1:269980901692:web:642b70f033694811817e39"
 };
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-let oud = {}, nieuw = {};
-
-(async () => {
-    const docOud = await getDoc(doc(db,"Productiedatabase",localStorage.productNu));
-    const docNieuw = await getDoc(doc(db,"Productiedatabase",localStorage.productNa));
-    oud = docOud.data();
-    nieuw = docNieuw.data();
-
-    info.innerText = `Ombouw van ${oud.omschrijving} → ${nieuw.omschrijving}`;
-    document.querySelectorAll(".row").forEach(r=>{
-        const f=r.dataset.field;
-        if(oud[f]||nieuw[f]){
-            r.style.display="block";
-            r.querySelector("span").innerText=`${oud[f]||"-"} → ${nieuw[f]||"-"}`;
+async function haalArtikel(artikelnummer){
+    const snap = await getDocs(collection(db,"Productiedatabase"));
+    let gevonden = null;
+    snap.forEach(d=>{
+        const data = d.data();
+        if((data.artikelnummer||"").toUpperCase() === artikelnummer.toUpperCase()){
+            gevonden = data;
         }
     });
-})();
+    return gevonden;
+}
+
+const oud = await haalArtikel(localStorage.productNu);
+const nieuw = await haalArtikel(localStorage.productNa);
+
+info.innerText = `Ombouw van ${oud.omschrijving} → ${nieuw.omschrijving}`;
+
+document.querySelectorAll(".row").forEach(r=>{
+    const f=r.dataset.field;
+    if(oud[f]||nieuw[f]){
+        r.style.display="block";
+        r.querySelector("span").innerText=`${oud[f]||"-"} → ${nieuw[f]||"-"}`;
+    }
+});
 
 window.bereken = function() {
     const volume = parseInt(oud.blikinhoud) || 33;
@@ -85,18 +108,10 @@ window.bereken = function() {
     const nu = oud.deksel;
     const na = nieuw.deksel;
 
-    let melding = "<span style='color:red'>Leeg laten lopen + kleur scheiden</span>";
-    let berekeningInfo = "basis pakken";
+    if(nu==="VAD0048" && na==="VAD0053") pakken-=10;
+    else if(nu==="VAD0053" && na==="VAD0048") pakken+=10;
 
-    if(nu==="VAD0048" && na==="VAD0053"){ pakken-=10; melding="<span style='color:green'>Nieuwe deksels mogen achteraan</span>"; berekeningInfo="basis pakken −10";}
-    else if(nu==="VAD0053" && na==="VAD0048"){ pakken+=10; melding="<span style='color:green'>Nieuwe deksels mogen achteraan</span>"; berekeningInfo="basis pakken +10";}
-
-    output.innerHTML = `Aantal pakken: <b>${pakken.toFixed(2)}</b><br>${melding}<br>
-        <span style="color:gray;font-size:14px">(${berekeningInfo})</span>`;
-
-    let werkbon = JSON.parse(localStorage.getItem("werkbon")||'{}');
-    werkbon.blik3 = output.innerText;
-    localStorage.setItem("werkbon", JSON.stringify(werkbon));
+    output.innerHTML = `Aantal pakken: <b>${pakken.toFixed(2)}</b>`;
 }
 </script>
 
