@@ -74,7 +74,7 @@ let oud = {}, nieuw = {};
     });
 })();
 
-function bereken() {
+window.bereken = function() {
     const volume = parseInt(oud.blikinhoud) || 33;
     const rest = parseFloat(document.getElementById("rest").value);
     if(!rest || rest<=0){ alert("Vul een geldig restvolume in"); return; }
