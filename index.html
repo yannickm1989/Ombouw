@@ -91,9 +91,9 @@ body {
     </div>
 
     <div class="tiles">
-        <a href="depal.html" class="tile green">Depal</a>
         <a href="blik3.html" class="tile blue">Blik 3</a>
         <a href="blik4.html" class="tile blue">Blik 4</a>
+        <a href="depal.html" class="tile green">Depal</a>
         <a href="sp1.html" class="tile red">SP1</a>
         <a href="wsp.html" class="tile red">WSP</a>
         <a href="tsp.html" class="tile red">TSP</a>
@@ -104,15 +104,15 @@ body {
 </div>
 
 <script>
-function save() {
-    localStorage.setItem("productNu", productNu.value.trim());
-    localStorage.setItem("productNa", productNa.value.trim());
-}
-
 window.onload = () => {
     productNu.value = localStorage.getItem("productNu") || "";
     productNa.value = localStorage.getItem("productNa") || "";
 };
+
+function save() {
+    localStorage.setItem("productNu", productNu.value.trim());
+    localStorage.setItem("productNa", productNa.value.trim());
+}
 </script>
 
 </body>

@@ -7,26 +7,10 @@
 
 <style>
 body { font-family: Arial; margin: 0; background: #f5f5f5; }
-
-.header {
-    background: #e3f2fd;
-    color: #1565c0;
-    padding: 12px 15px;
-    display: flex;
-    justify-content: space-between;
-}
-
+.header { background: #e3f2fd; color: #1565c0; padding: 12px 15px; display: flex; justify-content: space-between; }
 .app { max-width: 400px; margin: auto; padding: 15px; }
-
 .back { text-decoration: none; color: #1565c0; font-size: 14px; }
-
-.switch-info, .row {
-    background: white;
-    border-radius: 6px;
-    padding: 10px;
-    margin-bottom: 10px;
-}
-
+.switch-info, .row { background: white; border-radius: 6px; padding: 10px; margin-bottom: 10px; }
 .row { display: none; }
 .row strong { display: block; font-size: 13px; color: #555; }
 </style>
@@ -49,6 +33,11 @@ body { font-family: Arial; margin: 0; background: #f5f5f5; }
 <div class="row" data-field="deksel"><strong>Deksel</strong><span></span></div>
 <div class="row" data-field="verpakker1"><strong>Verpakker 1</strong><span></span></div>
 <div class="row" data-field="verpakker2"><strong>Verpakker 2</strong><span></span></div>
+
+<label>Restvolume (liter):</label>
+<input type="number" id="rest" placeholder="Vul hier in">
+<button onclick="bereken()">Bereken</button>
+<div id="output"></div>
 </div>
 
 <script type="module">
@@ -61,24 +50,58 @@ const firebaseConfig = {
     projectId: "productiedatabase",
     storageBucket: "productiedatabase.firebasestorage.app",
     messagingSenderId: "269980901692",
-    appId: "1:269980901692:web:642b70f033694811817e39"
+    appId: "1:269980901692:web:642b70f033694811e39"
 };
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-const oud = (await getDoc(doc(db,"productiedatabase",localStorage.productNu))).data();
-const nieuw = (await getDoc(doc(db,"productiedatabase",localStorage.productNa))).data();
+let oud = {}, nieuw = {};
 
-info.innerText = `Ombouw van ${oud.omschrijving} → ${nieuw.omschrijving}`;
+(async () => {
+    const docOud = await getDoc(doc(db,"Productiedatabase",localStorage.productNu));
+    const docNieuw = await getDoc(doc(db,"Productiedatabase",localStorage.productNa));
+    oud = docOud.data();
+    nieuw = docNieuw.data();
 
-document.querySelectorAll(".row").forEach(r=>{
-    const f=r.dataset.field;
-    if(oud[f]||nieuw[f]){
-        r.style.display="block";
-        r.querySelector("span").innerText=`${oud[f]||"-"} → ${nieuw[f]||"-"}`;
-    }
-});
+    info.innerText = `Ombouw van ${oud.omschrijving} → ${nieuw.omschrijving}`;
+    document.querySelectorAll(".row").forEach(r=>{
+        const f=r.dataset.field;
+        if(oud[f]||nieuw[f]){
+            r.style.display="block";
+            r.querySelector("span").innerText=`${oud[f]||"-"} → ${nieuw[f]||"-"}`;
+        }
+    });
+})();
+
+function bereken() {
+    const volume = parseInt(oud.blikinhoud) || 33;
+    const rest = parseFloat(document.getElementById("rest").value);
+    if(!rest || rest<=0){ alert("Vul een geldig restvolume in"); return; }
+
+    let factor = volume===33 ? 3 : 2;
+    let pakken = (rest*factor)/680;
+
+    const nu = oud.deksel;
+    const na = nieuw.deksel;
+
+    let melding = "<span style='color:red'>Leeg laten lopen + kleur scheiden</span>";
+    let berekeningInfo = "basis pakken";
+
+    if(nu==="VAD0048" && na==="VAD0053"){ pakken-=10; melding="<span style='color:green'>Nieuwe deksels mogen achteraan</span>"; berekeningInfo="basis pakken −10";}
+    else if(nu==="VAD0053" && na==="VAD0048"){ pakken+=10; melding="<span style='color:green'>Nieuwe deksels mogen achteraan</span>"; berekeningInfo="basis pakken +10";}
+
+    // Blik4 correctie
+    pakken -= 2;
+    berekeningInfo += ", −2";
+
+    output.innerHTML = `Aantal pakken: <b>${pakken.toFixed(2)}</b><br>${melding}<br>
+        <span style="color:gray;font-size:14px">(${berekeningInfo})</span>`;
+
+    let werkbon = JSON.parse(localStorage.getItem("werkbon")||'{}');
+    werkbon.blik4 = output.innerText;
+    localStorage.setItem("werkbon", JSON.stringify(werkbon));
+}
 </script>
 
 </body>
