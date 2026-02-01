@@ -73,6 +73,17 @@ body {
 .blue  { border-color: #2196f3; color: #2196f3; }
 .red   { border-color: #f44336; color: #f44336; }
 .yellow{ border-color: #ff9800; color: #ff9800; }
+
+/* NIEUW – visuele groepering */
+.group {
+    margin-bottom: 14px;
+    padding-bottom: 14px;
+    border-bottom: 1px solid #ddd;
+}
+
+.group:last-child {
+    border-bottom: none;
+}
 </style>
 </head>
 
@@ -90,15 +101,36 @@ body {
         <input id="productNa" placeholder="Nieuw artikel" oninput="save()">
     </div>
 
-    <div class="tiles">
-        <a href="depal.html" class="tile green">Depal</a>
-        <a href="blik3.html" class="tile blue">Blik 3</a>
-        <a href="blik4.html" class="tile blue">Blik 4</a>
-        <a href="sp1.html" class="tile red">SP1</a>
-        <a href="wsp.html" class="tile red">WSP</a>
-        <a href="tsp.html" class="tile red">TSP</a>
-        <a href="sp2.html" class="tile red">SP2</a>
-        <a href="pal.html" class="tile yellow">Pal</a>
+    <!-- GROEP 1 - Groen -->
+    <div class="group">
+        <div class="tiles">
+            <a href="depal.html" class="tile green">Depal</a>
+        </div>
+    </div>
+
+    <!-- GROEP 2 - Blauw -->
+    <div class="group">
+        <div class="tiles">
+            <a href="blik3.html" class="tile blue">Blik 3</a>
+            <a href="blik4.html" class="tile blue">Blik 4</a>
+        </div>
+    </div>
+
+    <!-- GROEP 3 - Rood -->
+    <div class="group">
+        <div class="tiles">
+            <a href="sp1.html" class="tile red">SP1</a>
+            <a href="wsp.html" class="tile red">WSP</a>
+            <a href="tsp.html" class="tile red">TSP</a>
+            <a href="sp2.html" class="tile red">SP2</a>
+        </div>
+    </div>
+
+    <!-- GROEP 4 - Geel -->
+    <div class="group">
+        <div class="tiles">
+            <a href="pal.html" class="tile yellow">Pal</a>
+        </div>
     </div>
 
 </div>
